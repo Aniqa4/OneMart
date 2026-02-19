@@ -1,13 +1,28 @@
+import Featured from "~/pages/home/Featured";
 import type { Route } from "./+types/home";
-import { Welcome } from "../welcome/welcome";
+import Layout from "~/layout/Layout";
+import Popular from "~/pages/home/Popular";
+import Banner from "~/pages/home/Banner";
+import AllProducts from "~/pages/home/AllProducts";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "New React Router App" },
-    { name: "description", content: "Welcome to React Router!" },
+    { title: "GetProducts" },
+    {
+      name: "description",
+      content:
+        " Welcome to GetProducts! where creativity meets craftsmanship.",
+    },
   ];
 }
 
 export default function Home() {
-  return <Welcome />;
+  return (
+    <Layout>
+     {/*  <Banner />
+      <Featured />
+      <Popular /> */}
+      <AllProducts />
+    </Layout>
+  );
 }
