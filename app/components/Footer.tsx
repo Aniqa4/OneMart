@@ -11,11 +11,11 @@ function Footer() {
           <div>
             <p className="font-extrabold text-3xl mb-4 lg:mb-0">
               <Link to={"/"} className="hover:underline brand-txt">
-                GetProducts
+                eCommerce
               </Link>
             </p>
             <p className="text-gray-500 leading-relaxed max-w-md">
-              Welcome to GetProducts! 
+              Welcome to eCommerce! 
             </p>
           </div>
 
@@ -47,7 +47,7 @@ function Footer() {
         </div>
 
         <p className="text-center text-gray-500 mt-10 text-sm">
-          © {new Date().getFullYear()} GetProducts. All rights reserved.
+          © {new Date().getFullYear()} eCommerce. All rights reserved.
         </p>
       </div>
     </footer>

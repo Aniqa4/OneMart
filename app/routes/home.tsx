@@ -7,11 +7,11 @@ import AllProducts from "~/pages/home/AllProducts";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "GetProducts" },
+    { title: "eCommerce" },
     {
       name: "description",
       content:
-        " Welcome to GetProducts! where creativity meets craftsmanship.",
+        " Welcome to eCommerce! where creativity meets craftsmanship.",
     },
   ];
 }

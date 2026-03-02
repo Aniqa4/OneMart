@@ -4,7 +4,7 @@ import UserDashboard from "~/pages/dashboard/UserDashboard";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "GetProducts - Dashboard" },
+    { title: "eCommerce - Dashboard" },
     { name: "description", content: "Get your miniature trophy!" },
   ];
 }

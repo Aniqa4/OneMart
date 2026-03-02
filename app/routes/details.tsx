@@ -6,7 +6,7 @@ import ErrorPage from "~/pages/notFoundPage/ErrorPage";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "GetProducts - Product details" },
+    { title: "eCommerce - Product details" },
     { name: "description", content: "Get your miniature trophy!" },
   ];
 }

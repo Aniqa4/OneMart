@@ -17,10 +17,10 @@ function Navbar() {
     <div className="border-b border-gray-200 py-3 brand-bg text-white">
       <div className="max-w-[1280px] px-5 lg:px-10 mx-auto flex items-center justify-between">
         <p className="font-extrabold text-3xl">
-          <Link to={"/"}>GetProducts</Link>
+          <Link to={"/"}>eCommerce</Link>
         </p>
-        
-        <div className="flex gap-5">
+
+        <div className="flex gap-10 items-center">
           <div onClick={toggleCart} className="relative cursor-pointer">
             <IoBagHandleSharp size={24} />
             {cartItems > 0 && (
@@ -29,6 +29,9 @@ function Navbar() {
               </span>
             )}
           </div>
+          <Link to={"/login"}>
+            <p>Login/Register</p>
+          </Link>
         </div>
       </div>
 

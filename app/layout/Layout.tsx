@@ -34,7 +34,7 @@ const Layout: React.FC<{ children: ReactNode }> = ({ children }) => {
       {/* Fixed Navbar + SubNavbar */}
       <div className="fixed top-0 left-0 w-full z-40 bg-white shadow-sm">
         <Navbar />
-       {/*  <SubNavbar /> */}
+        <SubNavbar />
       </div>
 
       {/* Page Content with top padding so it’s not hidden behind navbar */}

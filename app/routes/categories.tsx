@@ -5,7 +5,7 @@ import Categories from "~/pages/categories/Categories";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "GetProducts - Category" },
+    { title: "eCommerce - Category" },
     { name: "description", content: "Get your miniature trophy!" },
   ];
 }

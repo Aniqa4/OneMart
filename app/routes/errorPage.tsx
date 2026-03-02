@@ -3,7 +3,7 @@ import type { Route } from "./+types/errorPage";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "GetProducts - Page not found" },
+    { title: "eCommerce - Page not found" },
     { name: "description", content: "Get your miniature trophy!" },
   ];
 }

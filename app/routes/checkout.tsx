@@ -4,7 +4,7 @@ import Checkout from "~/pages/checkout/Checkout";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "GetProducts - Checkout" },
+    { title: "eCommerce - Checkout" },
     { name: "description", content: "Get your miniature trophy!" },
   ];
 }

@@ -23,9 +23,17 @@ const Login: React.FC = () => {
     <main className="flex items-center justify-center px-4 py-20">
       <section className="w-full max-w-sm bg-white p-6 rounded-lg shadow">
         <h1 className="text-xl font-semibold text-center mb-4">
-          {showForgotPassword ? "Reset Password" : "Login"}
+          {showForgotPassword ? "Reset Password" : "Login/Register"}
         </h1>
 
+        <button
+          onClick={handleGoogleLogin}
+          className="w-full flex items-center justify-center gap-2 border rounded-md py-2 text-sm hover:bg-gray-50 mb-4 cursor-pointer"
+        >
+          <FcGoogle className="text-lg" />
+          Continue with Google
+        </button>
+{/* 
         {!showForgotPassword ? (
           <>
             <button
@@ -97,7 +105,7 @@ const Login: React.FC = () => {
               </button>
             </p>
           </>
-        )}
+        )} */}
       </section>
     </main>
   );

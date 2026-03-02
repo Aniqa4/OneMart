@@ -4,7 +4,7 @@ import Register from "~/pages/register/Register";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "GetProducts - Register" },
+    { title: "eCommerce - Register" },
     { name: "description", content: "Get your miniature trophy!" },
   ];
 }
