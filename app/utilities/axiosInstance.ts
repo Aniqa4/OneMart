@@ -28,7 +28,8 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     const original = error.config;
 
-    if (error.response?.status !== 401 || original._retry) {
+    const status = error.response?.status;
+    if ((status !== 401 && status !== 403) || original._retry) {
       return Promise.reject(error);
     }
 
@@ -54,11 +55,17 @@ axiosInstance.interceptors.response.use(
 
     try {
       const { data } = await axios.post(`${BASE_URL}/refresh-token`, { refreshToken });
-      localStorage.setItem("accessToken", data.accessToken);
-      localStorage.setItem("refreshToken", data.refreshToken);
-      axiosInstance.defaults.headers.common.Authorization = `Bearer ${data.accessToken}`;
-      original.headers.Authorization = `Bearer ${data.accessToken}`;
-      flushQueue(null, data.accessToken);
+      const payload = data.data ?? data;
+      const newAccess: string | undefined =
+        payload.accessToken ?? payload.token ?? payload.access_token;
+      const newRefresh: string | undefined =
+        payload.refreshToken ?? payload.refresh_token ?? refreshToken;
+      if (!newAccess) throw new Error("refresh response missing access token");
+      localStorage.setItem("accessToken", newAccess);
+      localStorage.setItem("refreshToken", newRefresh as string);
+      axiosInstance.defaults.headers.common.Authorization = `Bearer ${newAccess}`;
+      original.headers.Authorization = `Bearer ${newAccess}`;
+      flushQueue(null, newAccess);
       return axiosInstance(original);
     } catch (err) {
       flushQueue(err, null);

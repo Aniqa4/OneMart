@@ -19,6 +19,7 @@ interface AuthState {
   user: AuthUser | null;
   loading: boolean;
   error: string | null;
+  profileFetched: boolean;
   signUp: (name: string, email: string, password: string, confirmPassword: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signInWithGoogle: (credential: string) => Promise<void>;
@@ -50,6 +51,7 @@ const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
   loading: false,
   error: null,
+  profileFetched: false,
 
   clearError: () => set({ error: null }),
 
@@ -99,17 +101,27 @@ const useAuthStore = create<AuthState>((set, get) => ({
       // clear locally even if server errors
     }
     clear();
-    set({ accessToken: null, refreshToken: null, user: null });
+    set({ accessToken: null, refreshToken: null, user: null, profileFetched: false });
   },
 
   fetchProfile: async () => {
-    if (!get().accessToken) return;
+    if (!get().accessToken) {
+      set({ profileFetched: true });
+      return;
+    }
     try {
       const { data } = await axiosInstance.get("/profile");
-      set({ user: data.user });
+      // Sync tokens from localStorage in case the interceptor silently refreshed them
+      const accessToken = localStorage.getItem("accessToken") ?? get().accessToken;
+      const refreshToken = localStorage.getItem("refreshToken") ?? get().refreshToken;
+      set({ user: data.user, accessToken, refreshToken, profileFetched: true });
     } catch {
-      clear();
-      set({ accessToken: null, refreshToken: null, user: null });
+      if (!localStorage.getItem("accessToken")) {
+        set({ accessToken: null, refreshToken: null, user: null, profileFetched: false });
+        return;
+      }
+      // Temporary failure (network error, 500) — unblock the spinner
+      set({ profileFetched: true });
     }
   },
 
