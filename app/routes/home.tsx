@@ -19,9 +19,9 @@ export function meta({}: Route.MetaArgs) {
 export default function Home() {
   return (
     <Layout>
-     {/*  <Banner />
+      {/* <Banner /> */}
       <Featured />
-      <Popular /> */}
+      <Popular />
       <AllProducts />
     </Layout>
   );

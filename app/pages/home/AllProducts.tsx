@@ -13,7 +13,7 @@ function AllProducts() {
     const fetchPopular = async () => {
       try {
         const response = await axiosInstance.get("/products");
-        setProducts(response.data || []);
+        setProducts(response.data.products || []);
       } catch (err) {
         setError("Failed to load popular products.");
         console.error("Popular API Error:", err);

@@ -19,7 +19,7 @@ const useCategoryStore = create<CategoryStore>((set) => ({
     try {
       const { data } = await axiosInstance.get("/categories");
       set({
-        categories: Array.isArray(data) ? data : [],
+        categories: Array.isArray(data.categories) ? data.categories : [],
         loading: false,
       });
     } catch (err) {

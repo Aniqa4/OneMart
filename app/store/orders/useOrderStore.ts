@@ -54,7 +54,7 @@ const useOrderStore = create<OrderState>((set, get) => ({
     set({ loading: true, error: null });
     try {
       const { data } = await axiosInstance.get(`/orders/user/${userId}`);
-      set({ orders: Array.isArray(data) ? data : [] });
+      set({ orders: Array.isArray(data.orders) ? data.orders : [] });
     } catch (err: any) {
       if (err.response?.status === 404) {
         set({ orders: [] });
