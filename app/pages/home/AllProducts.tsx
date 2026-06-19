@@ -1,43 +1,29 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Card from "~/components/Card";
 import Title from "~/components/Title";
-import type { ProductProps } from "~/interface/ProductProps";
-import axiosInstance from "~/utilities/axiosInstance";
+import useHomeStore from "~/store/home/useHomeStore";
 
 function AllProducts() {
-  const [products, setProducts] = useState<ProductProps[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const { allProducts, allProductsLoading, allProductsError, fetchAllProducts } =
+    useHomeStore();
 
   useEffect(() => {
-    const fetchPopular = async () => {
-      try {
-        const response = await axiosInstance.get("/products");
-        setProducts(response.data.products || []);
-      } catch (err) {
-        setError("Failed to load popular products.");
-        console.error("Popular API Error:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPopular();
-  }, []);
+    fetchAllProducts();
+  }, [fetchAllProducts]);
 
   return (
     <div>
       <Title title="All Products" />
 
-      {loading && <p className="text-gray-600">Loading...</p>}
+      {allProductsLoading && <p className="text-gray-600">Loading...</p>}
 
-      {!loading && error && (
-        <p className="text-red-500">{error}</p>
+      {!allProductsLoading && allProductsError && (
+        <p className="text-red-500">{allProductsError}</p>
       )}
 
-      {!loading && !error && products.length > 0 && (
+      {!allProductsLoading && !allProductsError && allProducts.length > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
-          {products.map((product) => (
+          {allProducts.map((product) => (
             <Card
               key={product._id}
               productID={product._id}
@@ -52,9 +38,9 @@ function AllProducts() {
         </div>
       )}
 
-      {
-        products.length===0 && <p>No products to show.</p>
-      }
+      {allProducts.length === 0 && !allProductsLoading && (
+        <p>No products to show.</p>
+      )}
     </div>
   );
 }
