@@ -9,13 +9,13 @@ export interface CartItem {
 }
 
 interface CartCountProps {
-  cartItems: number; // total quantity of all items
-  cartList: CartItem[]; // array of cart items
+  cartItems: number;
+  cartList: CartItem[];
 
   initializeFromLocalStorage: () => void;
   addItem: (item: CartItem) => void;
   removeItem: (productID: string, count?: number) => void;
-
+  clearCart: () => void;
   getCartItems: () => CartItem[];
 }
 
@@ -90,6 +90,11 @@ const useCountCartItems = create<CartCountProps>((set, get) => ({
 
   getCartItems: () => {
     return get().cartList;
+  },
+
+  clearCart: () => {
+    localStorage.setItem("cart", "[]");
+    set({ cartItems: 0, cartList: [] });
   },
 }));
 
