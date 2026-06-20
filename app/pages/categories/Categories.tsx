@@ -25,9 +25,9 @@ export default function Categories({
         const response = await axiosInstance.get(
           `/products-by-category/${categoryID}`,
         );
-        console.log("data:", response.data.categories);
+        console.log("data:", response.data.products);
 
-        setProducts(Array.isArray(response.data.categories) ? response.data.categories : []);
+        setProducts(Array.isArray(response.data.products) ? response.data.products : []);
       } catch (err) {
         console.error("Error fetching products:", err);
         setError("Failed to load products");

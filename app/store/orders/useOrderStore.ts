@@ -25,6 +25,13 @@ export interface Order {
   updatedAt: string;
 }
 
+export interface Pagination {
+  total: number;
+  page: number;
+  limit: number;
+  pages: number;
+}
+
 export interface PlaceOrderPayload {
   items: { productId: string; quantity: number }[];
   customer: { name: string; email: string; phone?: string; address?: string };
@@ -35,29 +42,36 @@ export interface PlaceOrderPayload {
 
 interface OrderState {
   orders: Order[];
+  pagination: Pagination | null;
   loading: boolean;
   placing: boolean;
   error: string | null;
 
-  fetchUserOrders: (userId: string) => Promise<void>;
+  fetchUserOrders: (userId: string, page?: number, limit?: number) => Promise<void>;
   placeOrder: (payload: PlaceOrderPayload) => Promise<Order>;
   cancelOrder: (orderId: string) => Promise<void>;
 }
 
-const useOrderStore = create<OrderState>((set, get) => ({
+const useOrderStore = create<OrderState>((set) => ({
   orders: [],
+  pagination: null,
   loading: false,
   placing: false,
   error: null,
 
-  fetchUserOrders: async (userId) => {
+  fetchUserOrders: async (userId, page = 1, limit = 10) => {
     set({ loading: true, error: null });
     try {
-      const { data } = await axiosInstance.get(`/orders/user/${userId}`);
-      set({ orders: Array.isArray(data.orders) ? data.orders : [] });
+      const { data } = await axiosInstance.get(`/orders/user/${userId}`, {
+        params: { page, limit },
+      });
+      set({
+        orders: Array.isArray(data.orders) ? data.orders : [],
+        pagination: data.pagination ?? null,
+      });
     } catch (err: any) {
       if (err.response?.status === 404) {
-        set({ orders: [] });
+        set({ orders: [], pagination: null });
       } else {
         set({ error: err.response?.data?.message || "Failed to load orders" });
       }
@@ -70,7 +84,6 @@ const useOrderStore = create<OrderState>((set, get) => ({
     set({ placing: true, error: null });
     try {
       const { data } = await axiosInstance.post("/orders", payload);
-      set((s) => ({ orders: [data, ...s.orders] }));
       return data;
     } catch (err: any) {
       const msg = err.response?.data?.message || "Failed to place order";

@@ -55,7 +55,7 @@ const Login: React.FC = () => {
     try {
       await signInWithGoogle(response.credential);
       toast.success("Signed in successfully!");
-      navigate("/dashboard");
+      navigate("/");
     } catch (err: any) {
       toast.error(err.message || "Google sign in failed");
     }
@@ -67,7 +67,7 @@ const Login: React.FC = () => {
     try {
       await signIn(email, password);
       toast.success("Signed in successfully!");
-      navigate("/dashboard");
+      navigate("/");
     } catch (err: any) {
       toast.error(err.message);
     }

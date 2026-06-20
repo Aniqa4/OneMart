@@ -1,10 +1,10 @@
 import React, { useEffect, type ReactNode } from "react";
 import { GiShoppingCart } from "react-icons/gi";
-import Footer from "~/components/Footer";
 import Navbar from "~/components/navbar/Navbar";
 import SubNavbar from "~/components/navbar/SubNavbar";
 import useCountCartItems from "~/store/cart/countCartItems";
 import useManageCart from "~/store/cart/manageCart";
+import Footer from "./Footer";
 
 const Layout: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { openCart } = useManageCart();
