@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import Card from "~/components/Card";
 import Title from "~/components/Title";
+import { ProductGridSkeleton } from "~/components/CardSkeleton";
 import useHomeStore from "~/store/home/useHomeStore";
 
 function Popular() {
@@ -15,7 +16,7 @@ function Popular() {
     <div>
       <Title title="Popular" />
 
-      {popularLoading && <p className="text-gray-600">Loading...</p>}
+      {popularLoading && <ProductGridSkeleton count={4} />}
 
       {!popularLoading && popularError && (
         <p className="text-red-500">{popularError}</p>

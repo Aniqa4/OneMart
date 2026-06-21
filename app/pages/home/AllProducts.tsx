@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import Card from "~/components/Card";
 import Title from "~/components/Title";
+import { ProductGridSkeleton } from "~/components/CardSkeleton";
 import useHomeStore from "~/store/home/useHomeStore";
 
 function AllProducts() {
@@ -15,7 +16,7 @@ function AllProducts() {
     <div>
       <Title title="All Products" />
 
-      {allProductsLoading && <p className="text-gray-600">Loading...</p>}
+      {allProductsLoading && <ProductGridSkeleton count={8} />}
 
       {!allProductsLoading && allProductsError && (
         <p className="text-red-500">{allProductsError}</p>

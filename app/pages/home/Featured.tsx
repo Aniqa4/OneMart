@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import Card from "~/components/Card";
 import Title from "~/components/Title";
+import { ProductGridSkeleton } from "~/components/CardSkeleton";
 import useHomeStore from "~/store/home/useHomeStore";
 
 function Featured() {
@@ -19,7 +20,7 @@ function Featured() {
     <div>
       <Title title="Featured" />
 
-      {featuredLoading && <p className="text-gray-600">Loading...</p>}
+      {featuredLoading && <ProductGridSkeleton count={4} />}
 
       {!featuredLoading && featuredError && (
         <p className="text-red-500">{featuredError}</p>
