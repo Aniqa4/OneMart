@@ -101,7 +101,7 @@ export default function OrdersSection({
                       BDT {order.totalAmount?.toFixed(2)}
                     </td>
                     <td className="px-6 lg:px-8 py-4 text-right" onClick={(e) => e.stopPropagation()}>
-                      {["pending", "processing"].includes(order.orderStatus) && (
+                      {order.orderStatus === "pending" && (
                         <button
                           onClick={() => onCancelClick(order._id)}
                           disabled={cancellingId === order._id}

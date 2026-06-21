@@ -96,7 +96,7 @@ export default function OrderDetailModal({ order, cancellingId, onClose, onCance
             </div>
           )}
 
-          {["pending", "processing"].includes(order.orderStatus) && (
+          {order.orderStatus === "pending" && (
             <button
               onClick={() => onCancel(order._id)}
               disabled={cancellingId === order._id}

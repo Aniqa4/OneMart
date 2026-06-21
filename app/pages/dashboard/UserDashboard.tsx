@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router";
 import { toast } from "react-toastify";
 import useAuthStore from "~/store/auth/useAuthStore";
 import useOrderStore from "~/store/orders/useOrderStore";
@@ -15,7 +16,10 @@ export default function UserDashboard() {
   const { user, updateProfile, changePassword, resendVerification } = useAuthStore();
   const { orders, pagination, loading: ordersLoading, fetchUserOrders, cancelOrder } = useOrderStore();
 
-  const [section, setSection] = useState<Section>("profile");
+  const location = useLocation();
+  const [section, setSection] = useState<Section>(
+    (location.state as { section?: Section })?.section ?? "profile"
+  );
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [cancelTargetId, setCancelTargetId] = useState<string | null>(null);
   const [cancellingId, setCancellingId] = useState<string | null>(null);
