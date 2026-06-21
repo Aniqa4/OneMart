@@ -10,4 +10,6 @@ export default [
   route("checkout", "routes/checkout.tsx"),
   route("categories/:id/:categoryName", "routes/categories.tsx"),
   route("verify-email", "routes/verifyEmail.tsx"),
+  route("search/:name", "routes/search.tsx"),
+  route("categories", "routes/allCategories.tsx"),
 ] satisfies RouteConfig;

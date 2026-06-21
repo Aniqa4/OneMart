@@ -29,6 +29,13 @@ function SubNavbar() {
 
         {/* ── Desktop ── */}
         <div className="hidden md:flex items-center gap-1 h-11">
+          <Link
+            to="/categories"
+            className="flex items-center px-3 py-1.5 rounded-lg text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition whitespace-nowrap"
+          >
+            All
+          </Link>
+          <div className="w-px h-4 mx-1" />
           {categories.map((category) => (
             <div key={category._id} className="relative group h-full flex items-center">
               <Link
@@ -82,13 +89,21 @@ function SubNavbar() {
 
         {/* ── Mobile ── */}
         <div className="md:hidden">
-          <button
-            onClick={() => setOpenMenu((o) => !o)}
-            className="w-full flex items-center justify-between py-3 text-sm font-medium text-gray-700"
-          >
-            <span>Browse Categories</span>
-            {openMenu ? <IoChevronUp className="text-gray-400" /> : <IoChevronDown className="text-gray-400" />}
-          </button>
+          <div className="flex items-center justify-between py-3">
+            <button
+              onClick={() => setOpenMenu((o) => !o)}
+              className="flex items-center gap-1 text-sm font-medium text-gray-700"
+            >
+              <span>Explore Categories</span>
+              {openMenu ? <IoChevronUp className="text-gray-400" /> : <IoChevronDown className="text-gray-400" />}
+            </button>
+            <Link
+              to="/categories"
+              className="text-sm font-medium text-gray-500 hover:text-gray-900 transition"
+            >
+              View all
+            </Link>
+          </div>
 
           {openMenu && (
             <div className="pb-3 space-y-0.5">
