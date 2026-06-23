@@ -4,15 +4,17 @@ import Navbar from "~/components/navbar/Navbar";
 import SubNavbar from "~/components/navbar/SubNavbar";
 import useCountCartItems from "~/store/cart/countCartItems";
 import useManageCart from "~/store/cart/manageCart";
+import useAuthStore from "~/store/auth/useAuthStore";
 import Footer from "./Footer";
 
 const Layout: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { openCart } = useManageCart();
-  const { cartItems, initializeFromLocalStorage } = useCountCartItems();
+  const { cartItems, fetchCart } = useCountCartItems();
+  const accessToken = useAuthStore((s) => s.accessToken);
 
   useEffect(() => {
-    initializeFromLocalStorage();
-  }, []);
+    fetchCart();
+  }, [accessToken]);
 
   return (
     <div>

@@ -5,19 +5,23 @@ import useManageCart from "~/store/cart/manageCart";
 
 function Cart() {
   const { isOpen, closeCart } = useManageCart();
-  const { cartList, removeItem, addItem } = useCountCartItems();
+  const { cartList, updateQuantity, removeItem } = useCountCartItems();
   const navigate = useNavigate();
 
   const handleIncrease = (item: CartItem) => {
-    addItem({ ...item, quantity: 1 });
+    updateQuantity(item._id, item.quantity + 1);
   };
 
   const handleDecrease = (item: CartItem) => {
-    removeItem(item.productID, 1);
+    if (item.quantity > 1) {
+      updateQuantity(item._id, item.quantity - 1);
+    } else {
+      removeItem(item._id);
+    }
   };
 
   const handleRemove = (item: CartItem) => {
-    removeItem(item.productID, item.quantity);
+    removeItem(item._id);
   };
 
   const handleCheckout = () => {
@@ -63,14 +67,14 @@ function Cart() {
             <ul className="space-y-6">
               {cartList.map((item) => (
                 <li
-                  key={item.productID}
+                  key={item._id}
                   className="flex items-center justify-between"
                 >
                   {/* Image */}
-                  <Link to={`/details/${item.productID}`} onClick={closeCart}>
+                  <Link to={`/details/${item.productId}`} onClick={closeCart}>
                     <img
-                      src={item.imageUrl}
-                      alt={item.name}
+                      src={item.productImage}
+                      alt={item.productName}
                       className="w-14 h-14 rounded object-cover flex-shrink-0"
                     />
                   </Link>
@@ -78,15 +82,17 @@ function Cart() {
                   {/* Info + qty */}
                   <div className="flex flex-col flex-grow ml-4">
                     <p className="text-gray-900 text-sm font-medium truncate">
-                      <Link
-                        to={`/details/${item.productID}`}
-                        onClick={closeCart}
-                      >
-                        {item.name}
+                      <Link to={`/details/${item.productId}`} onClick={closeCart}>
+                        {item.productName}
                       </Link>
                     </p>
+                    {(item.variantLabel || item.sizeLabel) && (
+                      <p className="text-gray-400 text-xs mt-0.5 capitalize">
+                        {[item.variantLabel, item.sizeLabel].filter(Boolean).join(" / ")}
+                      </p>
+                    )}
                     <p className="text-gray-500 text-xs mt-1">
-                      BDT {item.price.toFixed(2)} each
+                      BDT {item.finalPrice.toFixed(2)} each
                     </p>
 
                     {/* Quantity controls */}
@@ -94,7 +100,7 @@ function Cart() {
                       <button
                         onClick={() => handleDecrease(item)}
                         className="w-7 h-7 flex items-center justify-center rounded bg-gray-100 hover:bg-gray-200 text-gray-700 transition cursor-pointer"
-                        aria-label={`Decrease quantity of ${item.name}`}
+                        aria-label={`Decrease quantity of ${item.productName}`}
                       >
                         –
                       </button>
@@ -104,7 +110,7 @@ function Cart() {
                       <button
                         onClick={() => handleIncrease(item)}
                         className="w-7 h-7 flex items-center justify-center rounded bg-gray-100 hover:bg-gray-200 text-gray-700 transition cursor-pointer"
-                        aria-label={`Increase quantity of ${item.name}`}
+                        aria-label={`Increase quantity of ${item.productName}`}
                       >
                         +
                       </button>
@@ -115,7 +121,7 @@ function Cart() {
                   <button
                     onClick={() => handleRemove(item)}
                     className="ml-4 text-gray-400 hover:text-gray-600 text-xs cursor-pointer"
-                    aria-label={`Remove ${item.name} from cart`}
+                    aria-label={`Remove ${item.productName} from cart`}
                   >
                     Remove
                   </button>
@@ -133,7 +139,7 @@ function Cart() {
               <span>
                 BDT{" "}
                 {cartList
-                  .reduce((sum, item) => sum + item.price * item.quantity, 0)
+                  .reduce((sum, item) => sum + item.finalPrice * item.quantity, 0)
                   .toFixed(2)}
               </span>
             </div>

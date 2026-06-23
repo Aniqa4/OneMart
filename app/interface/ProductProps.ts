@@ -1,12 +1,24 @@
+interface ProductSize {
+  label: string;
+  quantity: number;
+}
+
+interface ProductVariant {
+  label: string;
+  image: string;
+  hasSizes: boolean;
+  sizes: ProductSize[];
+  quantity: number;
+}
+
 export interface ProductProps {
-  id: string;
   _id: string;
 
   productName: string;
-  productImage: string;
+  productImage: string[];
 
   price: number;
-  discountedPrice: number;
+  discountedPrice: number | null;
   finalPrice: number;
 
   categoryName: string;
@@ -18,13 +30,15 @@ export interface ProductProps {
   subSubCategoryName: string | null;
   subSubCategoryID: string | null;
 
-  availableCopies: number;
-  soldCopies: number;
+  availableQuantity: number;
+  soldQuantity: number;
 
   description: string;
 
   featured: boolean;
 
+  hasVariants: boolean;
+  variants: ProductVariant[];
+
   createdAt: string;
-  updatedAt: string;
 }

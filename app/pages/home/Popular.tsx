@@ -32,8 +32,10 @@ function Popular() {
               price={product.price}
               discountedPrice={product.discountedPrice}
               finalPrice={product.finalPrice}
-              imageUrl={product.productImage}
-              quantity={product.availableCopies}
+              imageUrl={product.productImage[0]}
+              quantity={product.availableQuantity}
+              hasVariants={product.hasVariants}
+              variants={product.variants}
             />
           ))}
         </div>

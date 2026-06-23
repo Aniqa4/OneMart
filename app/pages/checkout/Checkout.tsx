@@ -43,7 +43,7 @@ export default function Checkout() {
   }, [user?.id]);
 
   const selectedDelivery = DELIVERY_OPTIONS.find((o) => o.value === form.deliveryLocation) ?? null;
-  const subtotal = cartList.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const subtotal = cartList.reduce((sum, item) => sum + item.finalPrice * item.quantity, 0);
   const total = selectedDelivery ? subtotal + selectedDelivery.charge : null;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -57,16 +57,21 @@ export default function Checkout() {
 
     try {
       const order = await placeOrder({
-        items: cartList.map((item) => ({ productId: item.productID, quantity: item.quantity })),
+        items: cartList.map((item) => ({
+          productId: item.productId,
+          quantity: item.quantity,
+          variantLabel: item.variantLabel,
+          sizeLabel: item.sizeLabel,
+        })),
         customer: {
           name: form.name,
           email: form.email,
-          phone: form.phone || undefined,
-          address: form.address || undefined,
+          address: form.address,
+          phone: form.phone,
         },
         paymentMethod: "Cash on Delivery",
-        notes: form.notes || undefined,
         deliveryCharge: selectedDelivery!.charge,
+        notes: form.notes || undefined,
       });
       clearCart();
       setOrderSuccessId(order._id);

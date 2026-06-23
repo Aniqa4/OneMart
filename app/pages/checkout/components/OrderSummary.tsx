@@ -2,10 +2,11 @@ import type { CheckoutForm } from "../interface/checkout.types";
 import { DELIVERY_OPTIONS } from "../interface/checkout.types";
 
 interface CartItem {
-  productID: string;
-  name: string;
-  imageUrl: string;
-  price: number;
+  _id: string;
+  productId: string;
+  productName: string;
+  productImage: string;
+  finalPrice: number;
   quantity: number;
 }
 
@@ -15,7 +16,7 @@ interface Props {
 }
 
 export default function OrderSummary({ cartList, deliveryLocation }: Props) {
-  const subtotal = cartList.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const subtotal = cartList.reduce((sum, item) => sum + item.finalPrice * item.quantity, 0);
   const selectedDelivery = DELIVERY_OPTIONS.find((o) => o.value === deliveryLocation) ?? null;
   const deliveryCharge = selectedDelivery?.charge ?? null;
   const total = deliveryCharge !== null ? subtotal + deliveryCharge : null;
@@ -30,20 +31,20 @@ export default function OrderSummary({ cartList, deliveryLocation }: Props) {
         <>
           <ul className="divide-y divide-gray-100 flex-grow">
             {cartList.map((item) => (
-              <li key={item.productID} className="flex items-center gap-4 py-3 px-1">
+              <li key={item._id} className="flex items-center gap-4 py-3 px-1">
                 <img
-                  src={item.imageUrl}
-                  alt={item.name}
+                  src={item.productImage}
+                  alt={item.productName}
                   className="w-14 h-14 object-cover rounded-md flex-shrink-0"
                 />
                 <div className="flex-grow min-w-0">
-                  <p className="font-medium text-gray-900 text-sm truncate">{item.name}</p>
+                  <p className="font-medium text-gray-900 text-sm truncate">{item.productName}</p>
                   <p className="text-gray-500 text-xs mt-0.5">
-                    Qty {item.quantity} × BDT {item.price.toFixed(2)}
+                    Qty {item.quantity} × BDT {item.finalPrice.toFixed(2)}
                   </p>
                 </div>
                 <p className="font-semibold text-gray-900 text-sm whitespace-nowrap">
-                  BDT {(item.price * item.quantity).toFixed(2)}
+                  BDT {(item.finalPrice * item.quantity).toFixed(2)}
                 </p>
               </li>
             ))}

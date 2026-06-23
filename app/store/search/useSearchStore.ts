@@ -26,10 +26,9 @@ const useSearchStore = create<SearchStore>((set) => ({
         { params: { page, limit } }
       );
       set({
-        results: data.products || data || [],
-        total: data.total ?? 0,
-        totalPages:
-          data.totalPages ?? Math.ceil((data.total ?? 0) / limit),
+        results: data.products || [],
+        total: data.pagination?.total ?? 0,
+        totalPages: data.pagination?.pages ?? 0,
       });
     } catch {
       set({ error: "Search failed. Please try again." });
