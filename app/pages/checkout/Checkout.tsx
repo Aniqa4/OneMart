@@ -57,16 +57,21 @@ export default function Checkout() {
 
     try {
       const order = await placeOrder({
-        items: cartList.map((item) => ({ productId: item.productID, quantity: item.quantity })),
+        items: cartList.map((item) => ({
+          productId: item.productID,
+          quantity: item.quantity,
+          variantLabel: item.variantLabel,
+          sizeLabel: item.sizeLabel,
+        })),
         customer: {
           name: form.name,
           email: form.email,
-          phone: form.phone || undefined,
-          address: form.address || undefined,
+          address: form.address,
+          phone: form.phone,
         },
         paymentMethod: "Cash on Delivery",
-        notes: form.notes || undefined,
         deliveryCharge: selectedDelivery!.charge,
+        notes: form.notes || undefined,
       });
       clearCart();
       setOrderSuccessId(order._id);

@@ -38,7 +38,7 @@ const useHomeStore = create<HomeStore>((set, get) => ({
     set({ featuredLoading: true, featuredError: "" });
     try {
       const { data } = await axiosInstance.get("/featured-products");
-      set({ featuredProducts: data || [] });
+      set({ featuredProducts: data.products || [] });
     } catch {
       set({ featuredError: "Failed to load featured products." });
     } finally {
@@ -51,7 +51,7 @@ const useHomeStore = create<HomeStore>((set, get) => ({
     set({ popularLoading: true, popularError: "" });
     try {
       const { data } = await axiosInstance.get("/best-selling");
-      set({ popularProducts: data || [] });
+      set({ popularProducts: data.products || [] });
     } catch {
       set({ popularError: "Failed to load popular products." });
     } finally {

@@ -6,6 +6,8 @@ export interface CartItem {
   price: number;
   imageUrl: string;
   quantity: number;
+  variantLabel?: string;
+  sizeLabel?: string;
 }
 
 interface CartCountProps {
@@ -41,7 +43,10 @@ const useCountCartItems = create<CartCountProps>((set, get) => ({
       );
 
       const existingIndex = currentItems.findIndex(
-        (item) => item.productID === newItem.productID
+        (item) =>
+          item.productID === newItem.productID &&
+          item.variantLabel === newItem.variantLabel &&
+          item.sizeLabel === newItem.sizeLabel
       );
 
       if (existingIndex !== -1) {

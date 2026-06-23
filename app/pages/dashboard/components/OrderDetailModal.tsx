@@ -66,13 +66,26 @@ export default function OrderDetailModal({ order, cancellingId, onClose, onCance
 
           <div>
             <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Items</p>
-            <ul className="space-y-2">
+            <ul className="space-y-3">
               {order.items?.map((item, idx) => (
-                <li key={idx} className="flex items-center justify-between text-sm">
-                  <span className="text-gray-700">
-                    {item.productName} <span className="text-gray-400">× {item.quantity}</span>
-                  </span>
-                  <span className="font-medium text-gray-900">BDT {item.finalPrice?.toFixed(2)}</span>
+                <li key={idx} className="flex items-center gap-3 text-sm">
+                  {item.productImage && (
+                    <img
+                      src={item.productImage}
+                      alt={item.productName}
+                      className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
+                    />
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-gray-800 font-medium truncate">{item.productName}</p>
+                    {(item.variantLabel || item.sizeLabel) && (
+                      <p className="text-gray-400 text-xs mt-0.5 capitalize">
+                        {[item.variantLabel, item.sizeLabel].filter(Boolean).join(" / ")}
+                      </p>
+                    )}
+                    <p className="text-gray-400 text-xs mt-0.5">× {item.quantity}</p>
+                  </div>
+                  <span className="font-medium text-gray-900 flex-shrink-0">BDT {item.finalPrice?.toFixed(2)}</span>
                 </li>
               ))}
             </ul>

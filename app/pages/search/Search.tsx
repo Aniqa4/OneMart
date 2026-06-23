@@ -55,14 +55,14 @@ function Search() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
             {results.map((p) => (
               <Card
-                key={p._id || p.id}
-                productID={p._id || p.id}
+                key={p._id}
+                productID={p._id}
                 name={p.productName}
                 price={p.price}
                 discountedPrice={p.discountedPrice}
                 finalPrice={p.finalPrice}
-                imageUrl={p.productImage}
-                quantity={p.availableCopies}
+                imageUrl={p.productImage[0]}
+                quantity={p.availableQuantity}
               />
             ))}
           </div>

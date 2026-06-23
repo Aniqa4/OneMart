@@ -36,8 +36,8 @@ function Featured() {
               price={product.price}
               discountedPrice={product.discountedPrice}
               finalPrice={product.finalPrice}
-              imageUrl={product.productImage}
-              quantity={product.availableCopies}
+              imageUrl={product.productImage[0]}
+              quantity={product.availableQuantity}
             />
           ))}
         </div>

@@ -22,7 +22,7 @@ function AllCategories() {
         result.sort((a, b) => b.price - a.price);
         break;
       case "in-stock":
-        result = result.filter((p) => p.availableCopies > 0);
+        result = result.filter((p) => p.availableQuantity > 0);
         break;
     }
     return result;
@@ -60,14 +60,14 @@ function AllCategories() {
           ) : (
             filteredProducts.map((p) => (
               <Card
-                key={p._id || p.id}
-                productID={p._id || p.id}
+                key={p._id}
+                productID={p._id}
                 name={p.productName}
                 price={p.price}
                 discountedPrice={p.discountedPrice}
                 finalPrice={p.finalPrice}
-                imageUrl={p.productImage}
-                quantity={p.availableCopies}
+                imageUrl={p.productImage[0]}
+                quantity={p.availableQuantity}
               />
             ))
           )}

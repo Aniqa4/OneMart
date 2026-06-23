@@ -53,7 +53,7 @@ export default function Categories({
         break;
 
       case "in-stock":
-        result = result.filter((p) => p.availableCopies > 0);
+        result = result.filter((p) => p.availableQuantity > 0);
         break;
 
       case "default":
@@ -100,12 +100,12 @@ export default function Categories({
           ) : (
             filteredProducts.map((product) => (
               <Card
-                key={product.id}
-                productID={product.id}
+                key={product._id}
+                productID={product._id}
                 name={product.productName}
                 price={product.price}
-                quantity={product.availableCopies}
-                imageUrl={product.productImage || ""}
+                quantity={product.availableQuantity}
+                imageUrl={product.productImage[0] || ""}
                 discountedPrice={product.discountedPrice}
                 finalPrice={product.finalPrice}
               />

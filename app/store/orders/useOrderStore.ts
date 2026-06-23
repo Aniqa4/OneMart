@@ -4,6 +4,9 @@ import axiosInstance from "~/utilities/axiosInstance";
 export interface OrderItem {
   productId: string;
   productName: string;
+  productImage: string;
+  variantLabel?: string;
+  sizeLabel?: string;
   price: number;
   quantity: number;
   finalPrice: number;
@@ -13,16 +16,16 @@ export interface Order {
   _id: string;
   userId?: string;
   items: OrderItem[];
-  customer: { name: string; email: string; phone?: string; address?: string };
+  customer: { name: string; email: string; address: string; phone: string };
   subtotal: number;
   deliveryCharge: number;
   totalAmount: number;
   orderStatus: "pending" | "processing" | "shipped" | "delivered" | "cancelled";
   paymentStatus: "pending" | "paid" | "failed" | "refunded";
-  paymentMethod?: string;
+  paymentMethod: string;
   notes?: string;
+  isGuest: boolean;
   createdAt: string;
-  updatedAt: string;
 }
 
 export interface Pagination {
@@ -33,11 +36,11 @@ export interface Pagination {
 }
 
 export interface PlaceOrderPayload {
-  items: { productId: string; quantity: number }[];
-  customer: { name: string; email: string; phone?: string; address?: string };
-  paymentMethod?: string;
+  items: { productId: string; quantity: number; variantLabel?: string; sizeLabel?: string }[];
+  customer: { name: string; email: string; address: string; phone: string };
+  paymentMethod: string;
+  deliveryCharge: number;
   notes?: string;
-  deliveryCharge?: number;
 }
 
 interface OrderState {
