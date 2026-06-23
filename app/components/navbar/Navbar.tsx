@@ -11,7 +11,7 @@ import SearchBar from "./SearchBar";
 
 function Navbar() {
   const { toggleCart } = useManageCart();
-  const { cartItems, initializeFromLocalStorage } = useCountCartItems();
+  const { cartItems } = useCountCartItems();
   const { user, accessToken, fetchProfile, profileFetched, logout, isAuthenticated } =
     useAuthStore();
   const { unreadCount, fetchUnreadCount, fetchNotifications } = useNotificationStore();
@@ -24,7 +24,6 @@ function Navbar() {
   const menuRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => { initializeFromLocalStorage(); }, []);
   useEffect(() => { if (accessToken && !profileFetched) fetchProfile(); }, [accessToken]);
   useEffect(() => { if (accessToken) fetchUnreadCount(); }, [accessToken]);
 

@@ -1,105 +1,163 @@
 import { create } from "zustand";
+import axiosInstance from "~/utilities/axiosInstance";
 
 export interface CartItem {
-  productID: string;
-  name: string;
+  _id: string;
+  productId: string;
+  productName: string;
+  productImage: string;
   price: number;
-  imageUrl: string;
+  discountedPrice: number;
+  variantLabel?: string;
+  sizeLabel?: string;
+  quantity: number;
+  finalPrice: number;
+}
+
+export interface AddItemPayload {
+  productId: string;
   quantity: number;
   variantLabel?: string;
   sizeLabel?: string;
+  // required for guest (localStorage) mode
+  productName?: string;
+  productImage?: string;
+  price?: number;
+  discountedPrice?: number;
+  finalPrice?: number;
 }
 
-interface CartCountProps {
+interface CartStore {
   cartItems: number;
   cartList: CartItem[];
+  cartLoading: boolean;
 
-  initializeFromLocalStorage: () => void;
-  addItem: (item: CartItem) => void;
-  removeItem: (productID: string, count?: number) => void;
-  clearCart: () => void;
-  getCartItems: () => CartItem[];
+  fetchCart: () => Promise<void>;
+  addItem: (payload: AddItemPayload) => Promise<void>;
+  updateQuantity: (itemId: string, quantity: number) => Promise<void>;
+  removeItem: (itemId: string) => Promise<void>;
+  clearCart: () => Promise<void>;
 }
 
-const useCountCartItems = create<CartCountProps>((set, get) => ({
+const LOCAL_KEY = "cart";
+const isAuth = () => !!localStorage.getItem("accessToken");
+const syncCount = (items: CartItem[]) => items.reduce((s, i) => s + i.quantity, 0);
+
+const readLocal = (): CartItem[] => {
+  try { return JSON.parse(localStorage.getItem(LOCAL_KEY) || "[]"); }
+  catch { return []; }
+};
+const writeLocal = (items: CartItem[]) =>
+  localStorage.setItem(LOCAL_KEY, JSON.stringify(items));
+
+const localId = (productId: string, variantLabel?: string, sizeLabel?: string) =>
+  [productId, variantLabel || "", sizeLabel || ""].join("__");
+
+const useCountCartItems = create<CartStore>((set, get) => ({
   cartItems: 0,
   cartList: [],
+  cartLoading: false,
 
-  initializeFromLocalStorage: () => {
-    const storedItems: CartItem[] = JSON.parse(
-      localStorage.getItem("cart") || "[]"
-    );
-    const totalQuantity = storedItems.reduce(
-      (sum, item) => sum + item.quantity,
-      0
-    );
-    set({ cartItems: totalQuantity, cartList: storedItems });
+  fetchCart: async () => {
+    if (get().cartLoading) return;
+
+    if (!isAuth()) {
+      const items = readLocal();
+      set({ cartList: items, cartItems: syncCount(items) });
+      return;
+    }
+
+    set({ cartLoading: true });
+    try {
+      const { data } = await axiosInstance.get("/cart");
+      const items: CartItem[] = data.items || [];
+      set({ cartList: items, cartItems: syncCount(items) });
+    } catch {
+      // keep existing state on error
+    } finally {
+      set({ cartLoading: false });
+    }
   },
 
-  addItem: (newItem) => {
-    set(() => {
-      const currentItems: CartItem[] = JSON.parse(
-        localStorage.getItem("cart") || "[]"
-      );
-
-      const existingIndex = currentItems.findIndex(
-        (item) =>
-          item.productID === newItem.productID &&
-          item.variantLabel === newItem.variantLabel &&
-          item.sizeLabel === newItem.sizeLabel
-      );
-
-      if (existingIndex !== -1) {
-        currentItems[existingIndex].quantity += newItem.quantity;
+  addItem: async (payload) => {
+    if (!isAuth()) {
+      const id = localId(payload.productId, payload.variantLabel, payload.sizeLabel);
+      const items = readLocal();
+      const idx = items.findIndex((i) => i._id === id);
+      if (idx !== -1) {
+        items[idx].quantity += payload.quantity;
       } else {
-        currentItems.push(newItem);
+        items.push({
+          _id: id,
+          productId: payload.productId,
+          productName: payload.productName || "",
+          productImage: payload.productImage || "",
+          price: payload.price || 0,
+          discountedPrice: payload.discountedPrice || 0,
+          variantLabel: payload.variantLabel,
+          sizeLabel: payload.sizeLabel,
+          quantity: payload.quantity,
+          finalPrice: payload.finalPrice ?? payload.price ?? 0,
+        });
       }
+      writeLocal(items);
+      set({ cartList: items, cartItems: syncCount(items) });
+      return;
+    }
 
-      localStorage.setItem("cart", JSON.stringify(currentItems));
-
-      const totalQuantity = currentItems.reduce(
-        (sum, item) => sum + item.quantity,
-        0
-      );
-      return { cartItems: totalQuantity, cartList: currentItems };
+    const { data } = await axiosInstance.post("/cart/items", {
+      productId: payload.productId,
+      quantity: payload.quantity,
+      variantLabel: payload.variantLabel,
+      sizeLabel: payload.sizeLabel,
     });
+    const items: CartItem[] = data.items || [];
+    set({ cartList: items, cartItems: syncCount(items) });
   },
 
-  removeItem: (productID, count = 1) => {
-    set(() => {
-      const currentItems: CartItem[] = JSON.parse(
-        localStorage.getItem("cart") || "[]"
-      );
-
-      const existingIndex = currentItems.findIndex(
-        (item) => item.productID === productID
-      );
-
-      if (existingIndex !== -1) {
-        currentItems[existingIndex].quantity -= count;
-
-        if (currentItems[existingIndex].quantity <= 0) {
-          currentItems.splice(existingIndex, 1);
+  updateQuantity: async (itemId, quantity) => {
+    if (!isAuth()) {
+      const items = readLocal();
+      const idx = items.findIndex((i) => i._id === itemId);
+      if (idx !== -1) {
+        if (quantity <= 0) {
+          items.splice(idx, 1);
+        } else {
+          items[idx].quantity = quantity;
         }
       }
+      writeLocal(items);
+      set({ cartList: items, cartItems: syncCount(items) });
+      return;
+    }
 
-      localStorage.setItem("cart", JSON.stringify(currentItems));
-
-      const totalQuantity = currentItems.reduce(
-        (sum, item) => sum + item.quantity,
-        0
-      );
-      return { cartItems: totalQuantity, cartList: currentItems };
-    });
+    const { data } = await axiosInstance.put(`/cart/items/${itemId}`, { quantity });
+    const items: CartItem[] = data.items || [];
+    set({ cartList: items, cartItems: syncCount(items) });
   },
 
-  getCartItems: () => {
-    return get().cartList;
+  removeItem: async (itemId) => {
+    if (!isAuth()) {
+      const items = readLocal().filter((i) => i._id !== itemId);
+      writeLocal(items);
+      set({ cartList: items, cartItems: syncCount(items) });
+      return;
+    }
+
+    const { data } = await axiosInstance.delete(`/cart/items/${itemId}`);
+    const items: CartItem[] = data.items || [];
+    set({ cartList: items, cartItems: syncCount(items) });
   },
 
-  clearCart: () => {
-    localStorage.setItem("cart", "[]");
-    set({ cartItems: 0, cartList: [] });
+  clearCart: async () => {
+    if (!isAuth()) {
+      writeLocal([]);
+      set({ cartList: [], cartItems: 0 });
+      return;
+    }
+
+    await axiosInstance.delete("/cart");
+    set({ cartList: [], cartItems: 0 });
   },
 }));
 

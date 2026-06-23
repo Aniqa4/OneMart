@@ -63,6 +63,8 @@ function Search() {
                 finalPrice={p.finalPrice}
                 imageUrl={p.productImage[0]}
                 quantity={p.availableQuantity}
+                hasVariants={p.hasVariants}
+                variants={p.variants}
               />
             ))}
           </div>

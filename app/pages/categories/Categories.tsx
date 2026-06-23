@@ -108,6 +108,8 @@ export default function Categories({
                 imageUrl={product.productImage[0] || ""}
                 discountedPrice={product.discountedPrice}
                 finalPrice={product.finalPrice}
+                hasVariants={product.hasVariants}
+                variants={product.variants}
               />
             ))
           )}

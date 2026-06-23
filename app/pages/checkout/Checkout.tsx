@@ -43,7 +43,7 @@ export default function Checkout() {
   }, [user?.id]);
 
   const selectedDelivery = DELIVERY_OPTIONS.find((o) => o.value === form.deliveryLocation) ?? null;
-  const subtotal = cartList.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const subtotal = cartList.reduce((sum, item) => sum + item.finalPrice * item.quantity, 0);
   const total = selectedDelivery ? subtotal + selectedDelivery.charge : null;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -58,7 +58,7 @@ export default function Checkout() {
     try {
       const order = await placeOrder({
         items: cartList.map((item) => ({
-          productId: item.productID,
+          productId: item.productId,
           quantity: item.quantity,
           variantLabel: item.variantLabel,
           sizeLabel: item.sizeLabel,

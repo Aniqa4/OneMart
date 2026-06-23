@@ -62,20 +62,16 @@ function ProductDetails({ id }: { id: string }) {
   const canAdd = stock !== null && stock > 0;
 
   const addToCart = () => {
-    const name = selectedVariant
-      ? selectedSize
-        ? `${product.productName} – ${selectedVariant.label} / ${selectedSize}`
-        : `${product.productName} – ${selectedVariant.label}`
-      : product.productName;
-
     addItem({
-      productID: id,
-      name,
-      price: product.finalPrice,
-      imageUrl: activeImage || product.productImage[0],
+      productId: id,
       quantity,
       variantLabel: selectedVariant?.label,
       sizeLabel: selectedSize ?? undefined,
+      productName: product.productName,
+      productImage: activeImage || product.productImage[0],
+      price: product.price,
+      discountedPrice: product.discountedPrice ?? 0,
+      finalPrice: product.finalPrice,
     });
     setQuantity(1);
     alert("Added to cart");
