@@ -22,7 +22,7 @@ function AllCategories() {
         result.sort((a, b) => b.price - a.price);
         break;
       case "in-stock":
-        result = result.filter((p) => p.availableQuantity > 0);
+        result = result.filter((p) => p.inStock);
         break;
     }
     return result;
@@ -67,7 +67,7 @@ function AllCategories() {
                 discountedPrice={p.discountedPrice}
                 finalPrice={p.finalPrice}
                 imageUrl={p.productImage[0]}
-                quantity={p.availableQuantity}
+                inStock={p.inStock}
                 hasVariants={p.hasVariants}
                 variants={p.variants}
               />

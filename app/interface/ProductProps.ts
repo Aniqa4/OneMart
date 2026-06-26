@@ -1,6 +1,6 @@
 interface ProductSize {
   label: string;
-  quantity: number;
+  inStock: boolean;
 }
 
 interface ProductVariant {
@@ -8,7 +8,7 @@ interface ProductVariant {
   image: string;
   hasSizes: boolean;
   sizes: ProductSize[];
-  quantity: number;
+  inStock: boolean;
 }
 
 export interface ProductProps {
@@ -18,21 +18,21 @@ export interface ProductProps {
   productImage: string[];
 
   price: number;
-  discountedPrice: number | null;
+  discountedPrice: number;
   finalPrice: number;
+
+  inStock: boolean;
 
   categoryName: string;
   categoryID: string;
 
-  subCategoryName: string | null;
-  subCategoryID: string | null;
+  subCategoryName: string;
+  subCategoryID: string;
 
-  subSubCategoryName: string | null;
-  subSubCategoryID: string | null;
+  subSubCategoryName: string;
+  subSubCategoryID: string;
 
-  availableQuantity: number;
-  soldQuantity: number;
-
+  
   description: string;
 
   featured: boolean;

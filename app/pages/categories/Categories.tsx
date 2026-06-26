@@ -53,7 +53,7 @@ export default function Categories({
         break;
 
       case "in-stock":
-        result = result.filter((p) => p.availableQuantity > 0);
+        result = result.filter((p) => p.inStock);
         break;
 
       case "default":
@@ -104,7 +104,7 @@ export default function Categories({
                 productID={product._id}
                 name={product.productName}
                 price={product.price}
-                quantity={product.availableQuantity}
+                inStock={product.inStock}
                 imageUrl={product.productImage[0] || ""}
                 discountedPrice={product.discountedPrice}
                 finalPrice={product.finalPrice}

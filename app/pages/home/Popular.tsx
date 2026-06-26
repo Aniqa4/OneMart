@@ -33,7 +33,7 @@ function Popular() {
               discountedPrice={product.discountedPrice}
               finalPrice={product.finalPrice}
               imageUrl={product.productImage[0]}
-              quantity={product.availableQuantity}
+              inStock={product.inStock}
               hasVariants={product.hasVariants}
               variants={product.variants}
             />

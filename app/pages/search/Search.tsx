@@ -62,7 +62,7 @@ function Search() {
                 discountedPrice={p.discountedPrice}
                 finalPrice={p.finalPrice}
                 imageUrl={p.productImage[0]}
-                quantity={p.availableQuantity}
+                inStock={p.inStock}
                 hasVariants={p.hasVariants}
                 variants={p.variants}
               />

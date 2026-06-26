@@ -131,9 +131,11 @@ const useCountCartItems = create<CartStore>((set, get) => ({
       return;
     }
 
-    const { data } = await axiosInstance.put(`/cart/items/${itemId}`, { quantity });
-    const items: CartItem[] = data.items || [];
-    set({ cartList: items, cartItems: syncCount(items) });
+    const updated = get().cartList
+      .map((i) => (i._id === itemId ? { ...i, quantity } : i))
+      .filter((i) => i.quantity > 0);
+    set({ cartList: updated, cartItems: syncCount(updated) });
+    await axiosInstance.put(`/cart/items/${itemId}`, { quantity });
   },
 
   removeItem: async (itemId) => {
@@ -144,9 +146,9 @@ const useCountCartItems = create<CartStore>((set, get) => ({
       return;
     }
 
-    const { data } = await axiosInstance.delete(`/cart/items/${itemId}`);
-    const items: CartItem[] = data.items || [];
-    set({ cartList: items, cartItems: syncCount(items) });
+    const updated = get().cartList.filter((i) => i._id !== itemId);
+    set({ cartList: updated, cartItems: syncCount(updated) });
+    await axiosInstance.delete(`/cart/items/${itemId}`);
   },
 
   clearCart: async () => {

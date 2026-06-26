@@ -5,8 +5,12 @@ import { ProductGridSkeleton } from "~/components/CardSkeleton";
 import useHomeStore from "~/store/home/useHomeStore";
 
 function AllProducts() {
-  const { allProducts, allProductsLoading, allProductsError, fetchAllProducts } =
-    useHomeStore();
+  const {
+    allProducts,
+    allProductsLoading,
+    allProductsError,
+    fetchAllProducts,
+  } = useHomeStore();
 
   useEffect(() => {
     fetchAllProducts();
@@ -33,7 +37,7 @@ function AllProducts() {
               discountedPrice={product.discountedPrice}
               finalPrice={product.finalPrice}
               imageUrl={product.productImage[0]}
-              quantity={product.availableQuantity}
+              inStock={product.inStock}
               hasVariants={product.hasVariants}
               variants={product.variants}
             />

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "react-toastify";
 import { Link } from "react-router";
 import useCountCartItems from "~/store/cart/countCartItems";
 import type { ProductProps } from "~/interface/ProductProps";
@@ -10,8 +11,8 @@ interface CardProps {
   name: string;
   price: number;
   imageUrl: string;
-  quantity: number;
-  discountedPrice: number | null;
+  inStock: boolean;
+  discountedPrice: number;
   finalPrice: number;
   hasVariants?: boolean;
   variants?: Variant[];
@@ -24,7 +25,7 @@ function Card({
   discountedPrice,
   finalPrice,
   imageUrl,
-  quantity,
+  inStock,
   hasVariants = false,
   variants = [],
 }: CardProps) {
@@ -50,11 +51,12 @@ function Card({
 
   const canAdd = () => {
     if (!selectedVariant) return false;
+    if (!selectedVariant.inStock) return false;
     if (selectedVariant.hasSizes && !selectedSize) return false;
-    const stock = selectedVariant.hasSizes
-      ? selectedVariant.sizes.find((s) => s.label === selectedSize)?.quantity ?? 0
-      : selectedVariant.quantity;
-    return stock > 0;
+    if (selectedVariant.hasSizes) {
+      return selectedVariant.sizes.find((s) => s.label === selectedSize)?.inStock ?? false;
+    }
+    return true;
   };
 
   const handleAddFromModal = async (e: React.MouseEvent) => {
@@ -68,16 +70,24 @@ function Card({
       productName: name,
       productImage: selectedVariant.image || imageUrl,
       price,
+      discountedPrice,
       finalPrice,
     });
     closeModal();
-    alert("Added to cart");
+    toast.success("Added to cart");
   };
 
   const handleDirectAdd = (e: React.MouseEvent) => {
     e.preventDefault();
-    addItem({ productId: productID, quantity: 1, productName: name, productImage: imageUrl, price, finalPrice });
-    alert("Added to cart");
+    addItem({
+      productId: productID,
+      quantity: 1,
+      productName: name,
+      productImage: imageUrl,
+      price,
+      finalPrice,
+    });
+    toast.success("Added to cart");
   };
 
   const getModalButtonLabel = () => {
@@ -91,7 +101,7 @@ function Card({
       <Link to={`/details/${productID}`}>
         <div className="p-3 bg-gray-50 grid grid-cols-1 rounded-md shadow-sm">
           <div
-            onMouseEnter={() => quantity > 0 && setShowText(true)}
+            onMouseEnter={() => inStock && setShowText(true)}
             onMouseLeave={() => setShowText(false)}
             className="relative"
           >
@@ -100,7 +110,7 @@ function Card({
               alt={name}
               className="aspect-square object-cover rounded"
             />
-            {quantity === 0 ? (
+            {inStock === false ? (
               <div className="absolute inset-0 bg-black opacity-60 flex items-center justify-center text-white text-xl font-bold rounded">
                 Sold Out
               </div>
@@ -124,7 +134,7 @@ function Card({
             </p>
           </div>
 
-          {quantity > 0 ? (
+          {inStock ? (
             <button
               onClick={hasVariants ? openModal : handleDirectAdd}
               className="w-full rounded py-1 font-medium cursor-pointer bg-gray-200 hover:bg-gray-300 uppercase"
@@ -153,7 +163,9 @@ function Card({
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between">
-              <h3 className="font-semibold text-gray-900 truncate pr-4">{name}</h3>
+              <h3 className="font-semibold text-gray-900 truncate pr-4">
+                {name}
+              </h3>
               <button
                 onClick={closeModal}
                 className="text-gray-400 hover:text-gray-700 shrink-0"
@@ -165,7 +177,9 @@ function Card({
             {/* Color variants */}
             <div>
               <p className="text-sm font-medium text-gray-700 mb-2 capitalize">
-                {selectedVariant ? `Color: ${selectedVariant.label}` : "Select Color"}
+                {selectedVariant
+                  ? `Color: ${selectedVariant.label}`
+                  : "Select Color"}
               </p>
               <div className="flex gap-2 flex-wrap">
                 {variants.map((variant) => (
@@ -200,13 +214,13 @@ function Card({
                     <button
                       key={size.label}
                       onClick={() => setSelectedSize(size.label)}
-                      disabled={size.quantity === 0}
+                      disabled={!size.inStock}
                       className={`px-4 py-1.5 rounded border text-sm font-medium transition ${
                         selectedSize === size.label
                           ? "bg-gray-800 text-white border-gray-800"
-                          : size.quantity === 0
-                          ? "border-gray-200 text-gray-300 cursor-not-allowed line-through"
-                          : "border-gray-300 hover:border-gray-700"
+                          : !size.inStock
+                            ? "border-gray-200 text-gray-300 cursor-not-allowed line-through"
+                            : "border-gray-300 hover:border-gray-700"
                       }`}
                     >
                       {size.label}
