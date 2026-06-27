@@ -16,6 +16,8 @@ function AllProducts() {
     fetchAllProducts();
   }, [fetchAllProducts]);
 
+  if (!allProductsLoading && allProducts.length === 0) return null;
+
   return (
     <div>
       <Title title="All Products" />
@@ -45,9 +47,6 @@ function AllProducts() {
         </div>
       )}
 
-      {allProducts.length === 0 && !allProductsLoading && (
-        <p>No products to show.</p>
-      )}
     </div>
   );
 }

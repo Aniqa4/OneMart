@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
+import { MdOutlineMarkEmailRead } from "react-icons/md";
 import { Link, useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import useAuthStore from "~/store/auth/useAuthStore";
@@ -11,8 +12,11 @@ const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [unverified, setUnverified] = useState(false);
+  const [unverifiedEmail, setUnverifiedEmail] = useState("");
+  const [resending, setResending] = useState(false);
 
-  const { signIn, signInWithGoogle, loading, error, clearError, isAuthenticated } = useAuthStore();
+  const { signIn, signInWithGoogle, resendVerificationByEmail, loading, error, clearError, isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -64,12 +68,30 @@ const Login: React.FC = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     clearError();
+    setUnverified(false);
     try {
       await signIn(email, password);
       toast.success("Signed in successfully!");
       navigate("/");
     } catch (err: any) {
-      toast.error(err.message);
+      if (err.response?.status === 403 || err.message?.toLowerCase().includes("verif")) {
+        setUnverifiedEmail(email);
+        setUnverified(true);
+      } else {
+        toast.error(err.message);
+      }
+    }
+  };
+
+  const handleResend = async () => {
+    setResending(true);
+    try {
+      await resendVerificationByEmail(unverifiedEmail);
+      toast.success("Verification email sent!");
+    } catch {
+      toast.error("Failed to resend. Please try again.");
+    } finally {
+      setResending(false);
     }
   };
 
@@ -92,10 +114,28 @@ const Login: React.FC = () => {
           <hr className="flex-1 border-gray-200" />
         </div>
 
-        {error && (
+        {error && !unverified && (
           <p className="text-sm text-red-500 bg-red-50 border border-red-200 rounded px-3 py-2 mb-4">
             {error}
           </p>
+        )}
+
+        {unverified && (
+          <div className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-4 mb-4 text-center">
+            <MdOutlineMarkEmailRead className="mx-auto text-amber-500 mb-2" size={28} />
+            <p className="text-sm font-medium text-amber-800 mb-1">Email not verified</p>
+            <p className="text-xs text-amber-600 mb-3">
+              Check your inbox for the verification link.
+            </p>
+            <button
+              type="button"
+              onClick={handleResend}
+              disabled={resending}
+              className="text-xs font-semibold text-amber-700 hover:text-amber-900 underline disabled:opacity-50 transition"
+            >
+              {resending ? "Sending…" : "Resend verification email"}
+            </button>
+          </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">

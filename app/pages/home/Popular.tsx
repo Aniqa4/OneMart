@@ -12,6 +12,8 @@ function Popular() {
     fetchPopular();
   }, [fetchPopular]);
 
+  if (!popularLoading && popularProducts.length === 0) return null;
+
   return (
     <div>
       <Title title="Popular" />
@@ -41,9 +43,6 @@ function Popular() {
         </div>
       )}
 
-      {popularProducts.length === 0 && !popularLoading && (
-        <p>No products to show.</p>
-      )}
     </div>
   );
 }

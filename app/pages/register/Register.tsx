@@ -4,6 +4,7 @@ import { FiEye, FiEyeOff } from "react-icons/fi";
 import { Link, useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import useAuthStore from "~/store/auth/useAuthStore";
+import { MdOutlineMarkEmailRead } from "react-icons/md";
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID as string | undefined;
 
@@ -14,8 +15,11 @@ const Register: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [registered, setRegistered] = useState(false);
+  const [registeredEmail, setRegisteredEmail] = useState("");
+  const [resending, setResending] = useState(false);
 
-  const { signUp, signInWithGoogle, loading, error, clearError, isAuthenticated } = useAuthStore();
+  const { signUp, signInWithGoogle, resendVerificationByEmail, loading, error, clearError, isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -69,12 +73,55 @@ const Register: React.FC = () => {
     clearError();
     try {
       await signUp(name, email, password, confirmPassword);
-      toast.success("Account created! Check your email to verify.");
-      navigate("/dashboard");
+      setRegisteredEmail(email);
+      setRegistered(true);
     } catch (err: any) {
       toast.error(err.message);
     }
   };
+
+  const handleResend = async () => {
+    setResending(true);
+    try {
+      await resendVerificationByEmail(registeredEmail);
+      toast.success("Verification email resent!");
+    } catch {
+      toast.error("Failed to resend. Please try again.");
+    } finally {
+      setResending(false);
+    }
+  };
+
+  if (registered) {
+    return (
+      <main className="flex items-center justify-center px-4 py-20">
+        <section className="w-full max-w-sm bg-white p-8 rounded-lg shadow text-center">
+          <MdOutlineMarkEmailRead className="mx-auto text-gray-700 mb-4" size={48} />
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">Check your email</h2>
+          <p className="text-sm text-gray-500 mb-1">
+            We sent a verification link to
+          </p>
+          <p className="text-sm font-medium text-gray-800 mb-6">{registeredEmail}</p>
+          <p className="text-xs text-gray-400 mb-6">
+            Click the link in the email to activate your account, then sign in.
+          </p>
+          <Link
+            to="/login"
+            className="block w-full bg-gray-900 text-white py-2 rounded-md text-sm hover:bg-gray-700 transition mb-3"
+          >
+            Go to Sign In
+          </Link>
+          <button
+            onClick={handleResend}
+            disabled={resending}
+            className="text-sm text-gray-500 hover:text-gray-800 disabled:opacity-50 transition"
+          >
+            {resending ? "Sending…" : "Didn't get it? Resend"}
+          </button>
+        </section>
+      </main>
+    );
+  }
 
   return (
     <main className="flex items-center justify-center px-4 py-20">

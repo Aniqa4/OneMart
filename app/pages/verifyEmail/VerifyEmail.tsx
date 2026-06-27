@@ -44,8 +44,8 @@ const VerifyEmail: React.FC = () => {
             <div className="text-5xl mb-4">✓</div>
             <h2 className="text-xl font-semibold text-green-700 mb-2">Email Verified!</h2>
             <p className="text-gray-500 mb-6">{message}</p>
-            <Link to="/dashboard" className="inline-block bg-gray-800 text-white px-6 py-2 rounded-md text-sm hover:bg-gray-900">
-              Go to Dashboard
+            <Link to="/login" className="inline-block bg-gray-800 text-white px-6 py-2 rounded-md text-sm hover:bg-gray-900">
+              Sign In
             </Link>
           </>
         )}

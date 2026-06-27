@@ -1,12 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router";
-import { IoBagHandleSharp } from "react-icons/io5";
+import { CgShoppingBag } from "react-icons/cg";
+import { GoHeart, GoHeartFill } from "react-icons/go";
 import useCountCartItems from "~/store/cart/countCartItems";
 import useManageCart from "~/store/cart/manageCart";
 import useAuthStore from "~/store/auth/useAuthStore";
 import useNotificationStore from "~/store/notifications/useNotificationStore";
+import useWishlistStore from "~/store/wishlist/useWishlistStore";
 import Cart from "./Cart";
 import NotificationPanel from "./NotificationPanel";
+import WishlistPanel from "./WishlistPanel";
 import SearchBar from "./SearchBar";
 
 function Navbar() {
@@ -15,14 +18,17 @@ function Navbar() {
   const { user, accessToken, fetchProfile, profileFetched, logout, isAuthenticated } =
     useAuthStore();
   const { unreadCount, fetchUnreadCount, fetchNotifications } = useNotificationStore();
+  const { wishlistIds } = useWishlistStore();
   const navigate = useNavigate();
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
+  const [wishlistOpen, setWishlistOpen] = useState(false);
   const [logoutConfirm, setLogoutConfirm] = useState(false);
 
   const menuRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
+  const wishlistRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => { if (accessToken && !profileFetched) fetchProfile(); }, [accessToken]);
   useEffect(() => { if (accessToken) fetchUnreadCount(); }, [accessToken]);
@@ -33,6 +39,8 @@ function Navbar() {
         setMenuOpen(false);
       if (notifRef.current && !notifRef.current.contains(e.target as Node))
         setNotifOpen(false);
+      if (wishlistRef.current && !wishlistRef.current.contains(e.target as Node))
+        setWishlistOpen(false);
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
@@ -42,7 +50,14 @@ function Navbar() {
     const next = !notifOpen;
     setNotifOpen(next);
     setMenuOpen(false);
+    setWishlistOpen(false);
     if (next) fetchNotifications();
+  };
+
+  const handleWishlistToggle = () => {
+    setWishlistOpen((o) => !o);
+    setNotifOpen(false);
+    setMenuOpen(false);
   };
 
   const handleLogout = async () => {
@@ -70,13 +85,36 @@ function Navbar() {
             aria-label="Open cart"
             className="relative flex items-center justify-center w-10 h-10 rounded-xl hover:bg-white/15 transition"
           >
-            <IoBagHandleSharp size={21} />
+            <CgShoppingBag size={21} />
             {cartItems > 0 && (
               <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] text-[10px] font-bold bg-red-500 rounded-full flex items-center justify-center px-1 leading-none">
                 {cartItems > 99 ? "99+" : cartItems}
               </span>
             )}
           </button>
+
+          {/* Wishlist */}
+          {isAuthenticated() && (
+            <div className="relative" ref={wishlistRef}>
+              <button
+                onClick={handleWishlistToggle}
+                aria-label="Wishlist"
+                className="relative flex items-center justify-center w-10 h-10 rounded-xl hover:bg-white/15 transition"
+              >
+                {wishlistIds.length > 0 ? (
+                  <GoHeartFill size={21} />
+                ) : (
+                  <GoHeart size={21} />
+                )}
+                {wishlistIds.length > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] text-[10px] font-bold bg-red-500 rounded-full flex items-center justify-center px-1 leading-none">
+                    {wishlistIds.length > 99 ? "99+" : wishlistIds.length}
+                  </span>
+                )}
+              </button>
+              {wishlistOpen && <WishlistPanel onClose={() => setWishlistOpen(false)} />}
+            </div>
+          )}
 
           {/* Notifications */}
           {isAuthenticated() && (

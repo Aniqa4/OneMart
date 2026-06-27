@@ -33,6 +33,14 @@ axiosInstance.interceptors.response.use(
       return Promise.reject(error);
     }
 
+    // Only attempt refresh if this request was authenticated (had an access token).
+    // Unauthenticated 401/403 (e.g. wrong password, unverified email on /signin)
+    // are business-logic errors — pass them straight through.
+    const accessToken = localStorage.getItem("accessToken");
+    if (!accessToken) {
+      return Promise.reject(error);
+    }
+
     // Another request is already refreshing — queue this one
     if (isRefreshing) {
       return new Promise<string>((resolve, reject) =>
@@ -49,7 +57,6 @@ axiosInstance.interceptors.response.use(
     const refreshToken = localStorage.getItem("refreshToken");
     if (!refreshToken) {
       localStorage.removeItem("accessToken");
-      window.location.href = "/login";
       return Promise.reject(error);
     }
 

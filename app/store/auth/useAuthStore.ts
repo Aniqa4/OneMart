@@ -28,6 +28,7 @@ interface AuthState {
   updateProfile: (data: Partial<Pick<AuthUser, "name" | "phone" | "address">>) => Promise<void>;
   changePassword: (current: string, next: string, confirm: string) => Promise<void>;
   resendVerification: () => Promise<void>;
+  resendVerificationByEmail: (email: string) => Promise<void>;
   isAuthenticated: () => boolean;
   clearError: () => void;
 }
@@ -58,9 +59,8 @@ const useAuthStore = create<AuthState>((set, get) => ({
   signUp: async (name, email, password, confirmPassword) => {
     set({ loading: true, error: null });
     try {
-      const { data } = await axiosInstance.post("/signup", { name, email, password, confirmPassword });
-      save(data.accessToken, data.refreshToken);
-      set({ accessToken: data.accessToken, refreshToken: data.refreshToken, user: data.user, loading: false });
+      await axiosInstance.post("/signup", { name, email, password, confirmPassword });
+      set({ loading: false });
     } catch (err: any) {
       const msg = err.response?.data?.message || "Sign up failed";
       set({ loading: false, error: msg });
@@ -77,7 +77,7 @@ const useAuthStore = create<AuthState>((set, get) => ({
     } catch (err: any) {
       const msg = err.response?.data?.message || "Sign in failed";
       set({ loading: false, error: msg });
-      throw new Error(msg);
+      throw err;
     }
   },
 
@@ -136,6 +136,10 @@ const useAuthStore = create<AuthState>((set, get) => ({
 
   resendVerification: async () => {
     await axiosInstance.post("/resend-verification");
+  },
+
+  resendVerificationByEmail: async (email) => {
+    await axiosInstance.post("/resend-verification", { email });
   },
 
   isAuthenticated: () => !!get().accessToken,
