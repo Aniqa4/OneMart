@@ -27,6 +27,8 @@ interface AuthState {
   fetchProfile: () => Promise<void>;
   updateProfile: (data: Partial<Pick<AuthUser, "name" | "phone" | "address">>) => Promise<void>;
   changePassword: (current: string, next: string, confirm: string) => Promise<void>;
+  forgotPassword: (email: string) => Promise<void>;
+  resetPassword: (token: string, password: string, confirmPassword: string) => Promise<void>;
   resendVerification: () => Promise<void>;
   resendVerificationByEmail: (email: string) => Promise<void>;
   isAuthenticated: () => boolean;
@@ -132,6 +134,14 @@ const useAuthStore = create<AuthState>((set, get) => ({
 
   changePassword: async (currentPassword, newPassword, confirmNewPassword) => {
     await axiosInstance.put("/change-password", { currentPassword, newPassword, confirmNewPassword });
+  },
+
+  forgotPassword: async (email) => {
+    await axiosInstance.post("/forgot-password", { email });
+  },
+
+  resetPassword: async (token, password, confirmPassword) => {
+    await axiosInstance.post(`/reset-password/${token}`, { password, confirmPassword });
   },
 
   resendVerification: async () => {
