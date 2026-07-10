@@ -92,7 +92,7 @@ function Cart() {
                       </p>
                     )}
                     <p className="text-gray-500 text-xs mt-1">
-                      BDT {item.finalPrice.toFixed(2)} each
+                      BDT {item.finalPrice?.toFixed(2)} each
                     </p>
 
                     {/* Quantity controls */}
@@ -140,7 +140,7 @@ function Cart() {
                 BDT{" "}
                 {cartList
                   .reduce((sum, item) => sum + item.finalPrice * item.quantity, 0)
-                  .toFixed(2)}
+                  ?.toFixed(2)}
               </span>
             </div>
 

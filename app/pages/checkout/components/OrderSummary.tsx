@@ -40,11 +40,11 @@ export default function OrderSummary({ cartList, deliveryLocation }: Props) {
                 <div className="flex-grow min-w-0">
                   <p className="font-medium text-gray-900 text-sm truncate">{item.productName}</p>
                   <p className="text-gray-500 text-xs mt-0.5">
-                    Qty {item.quantity} × BDT {item.finalPrice.toFixed(2)}
+                    Qty {item.quantity} × BDT {item.finalPrice?.toFixed(2)}
                   </p>
                 </div>
                 <p className="font-semibold text-gray-900 text-sm whitespace-nowrap">
-                  BDT {(item.finalPrice * item.quantity).toFixed(2)}
+                  BDT {(item.finalPrice * item.quantity)?.toFixed(2)}
                 </p>
               </li>
             ))}
@@ -53,12 +53,12 @@ export default function OrderSummary({ cartList, deliveryLocation }: Props) {
           <div className="border-t border-gray-200 mt-4 pt-4 space-y-2">
             <div className="flex justify-between text-sm text-gray-600">
               <span>Subtotal</span>
-              <span>BDT {subtotal.toFixed(2)}</span>
+              <span>BDT {subtotal?.toFixed(2)}</span>
             </div>
             <div className="flex justify-between text-sm text-gray-600">
               <span>Delivery Charge</span>
               {deliveryCharge !== null ? (
-                <span>BDT {deliveryCharge.toFixed(2)}</span>
+                <span>BDT {deliveryCharge?.toFixed(2)}</span>
               ) : (
                 <span className="text-gray-400 italic">Select location</span>
               )}
@@ -66,7 +66,7 @@ export default function OrderSummary({ cartList, deliveryLocation }: Props) {
             <div className="flex justify-between text-base font-semibold text-gray-900 border-t border-gray-100 pt-2">
               <span>Total</span>
               {total !== null ? (
-                <span>BDT {total.toFixed(2)}</span>
+                <span>BDT {total?.toFixed(2)}</span>
               ) : (
                 <span className="text-gray-400 italic">—</span>
               )}

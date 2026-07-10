@@ -129,7 +129,7 @@ export default function DeliveryForm({ form, placing, total, onChange, onSubmit,
             {placing
               ? "Placing Order…"
               : total !== null
-              ? `Place Order · BDT ${total.toFixed(2)}`
+              ? `Place Order · BDT ${total?.toFixed(2)}`
               : "Place Order"}
           </button>
           <button
