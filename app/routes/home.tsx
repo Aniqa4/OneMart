@@ -19,14 +19,14 @@ export function meta({}: Route.MetaArgs) {
 export default function Home() {
   return (
     <Layout>
-      <HeroBanner />
-      <TrustStrip />
+      {/* <HeroBanner />
+      <TrustStrip /> */}
       <Featured />
       <CategoryShowcase />
       <Popular />
-      <PromoBanner />
+     {/*  <PromoBanner /> */}
       <AllProducts />
-      <Newsletter />
+      {/* <Newsletter /> */}
     </Layout>
   );
 }
